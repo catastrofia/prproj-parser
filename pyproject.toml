@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools_scm>=8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prproj-parser"
+dynamic = ["version"]
+description = "Efficient parser for Adobe Premiere Pro .prproj project files"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Video",
+]
+
+[project.optional-dependencies]
+fast = ["lxml>=4.9"]
+secure = ["defusedxml>=0.7"]
+all = ["lxml>=4.9", "defusedxml>=0.7"]
+
+[project.urls]
+Homepage = "https://github.com/catastrofia/prproj-parser"
+Issues = "https://github.com/catastrofia/prproj-parser/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]
+version_file = "src/prproj_parser/_version.py"
