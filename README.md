@@ -65,7 +65,7 @@ See the module docstrings (`help(prproj_parser)`) for full API details — the p
 
 ## Format documentation
 
-This parser is based on observed `.prproj` files, not an Adobe-published specification. See [docs/prproj-format](docs/prproj-format/README.md) for the detailed unofficial format notes, traversal model, timing rules, and known gotchas.
+This parser is based on observed `.prproj` files, not an Adobe-published specification. The detailed docs are included in the repository and source distribution, not the wheel. See [docs/prproj-format](docs/prproj-format/README.md) for the detailed unofficial format notes, traversal model, timing rules, and known gotchas.
 
 ## Known limitations
 
@@ -76,8 +76,7 @@ This parser is based on observed `.prproj` files, not an Adobe-published specifi
 ## Development
 
 ```bash
-pip install -e ".[all]"
-pip install pytest
+python -m pip install -e ".[all]" pytest
 pytest
 ```
 

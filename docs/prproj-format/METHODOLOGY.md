@@ -214,8 +214,9 @@ version-diffing since they provide no signal.
 ## What is and isn't claimed
 
 - Anything stated as fact in these docs was directly observed in the file
-  bytes, using the checks above, and can be reproduced by anyone with the
-  same test files and a text editor.
+  bytes, using the checks above. The private corpus cannot be published, so
+  external contributors should reproduce or challenge claims with sanitized
+  fixtures, XML excerpts, or clearly described experiments.
 - Where the corpus was insufficient to fully confirm something (e.g. the
   exact semantics of Project Versions 41/44, or whether gzip-vs-plain is
   truly a user preference toggle rather than something else), this is

@@ -1,8 +1,8 @@
 # Changelog
 
 All notable changes to this documentation are recorded here. Versioning is
-per-document-set (not per-file) — a version bump means the documentation as
-a whole was revised, even if only some files changed.
+per-document-set; individual files may keep the version of their last
+substantive update.
 
 ## 1.1 — 2026-09-18
 

@@ -18,10 +18,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install build tooling
-        run: pip install build
+        run: pip install build twine
 
       - name: Build sdist and wheel
         run: python -m build
+
+      - name: Check package metadata
+        run: twine check dist/*
 
       - uses: actions/upload-artifact@v4
         with:
