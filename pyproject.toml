@@ -29,6 +29,7 @@ all = ["lxml>=4.9", "defusedxml>=0.7"]
 [project.urls]
 Homepage = "https://github.com/catastrofia/prproj-parser"
 Issues = "https://github.com/catastrofia/prproj-parser/issues"
+Documentation = "https://github.com/catastrofia/prproj-parser/tree/main/docs/prproj-format"
 
 [tool.setuptools.packages.find]
 where = ["src"]

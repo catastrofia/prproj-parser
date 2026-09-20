@@ -63,11 +63,15 @@ Both `.prproj` files that are gzip-compressed (the common case) and files that a
 
 See the module docstrings (`help(prproj_parser)`) for full API details — the package ships with type hints (`py.typed`).
 
+## Format documentation
+
+This parser is based on observed `.prproj` files, not an Adobe-published specification. See [docs/prproj-format](docs/prproj-format/README.md) for the detailed unofficial format notes, traversal model, timing rules, and known gotchas.
+
 ## Known limitations
 
 - **Nested/multicam sequences are not flattened.** A sequence nested inside another timeline is detected (`clip.is_nested_sequence == True`) but its own clips are not recursively resolved. Tracked in [#1](https://github.com/catastrofia/prproj-parser/issues/1).
 - **Speed ramps / time remapping** (as opposed to a single constant speed) report the clip's base `PlaybackSpeed` value; keyframed speed changes over the clip's duration are not modeled.
-- Verified against Premiere Pro project files from versions 2023–2026 (`PremiereData Version="3"`). Older/newer formats are untested.
+- Verified against Premiere Pro project files from 2023–2026. The detailed format notes describe both the root `<PremiereData Version="3">` value and observed project-file versions 40, 42, 43, and 45.
 
 ## Development
 
@@ -76,6 +80,8 @@ pip install -e ".[all]"
 pip install pytest
 pytest
 ```
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request, especially if you plan to share `.prproj` examples.
 
 ## License
 
