@@ -3,18 +3,18 @@
 import pytest
 
 from prproj_parser.models import (
-    MediaInfo,
     Clip,
-    Track,
-    Sequence,
+    MediaInfo,
     Project,
+    Sequence,
+    Track,
     _UnresolvedAccessError,
 )
-
 
 # ---------------------------------------------------------------------------
 # MediaInfo
 # ---------------------------------------------------------------------------
+
 
 class TestMediaInfo:
     """Tests for MediaInfo dataclass."""
@@ -48,6 +48,7 @@ class TestMediaInfo:
 # ---------------------------------------------------------------------------
 # Clip
 # ---------------------------------------------------------------------------
+
 
 class TestClip:
     """Tests for Clip dataclass."""
@@ -97,6 +98,7 @@ class TestClip:
 # Track
 # ---------------------------------------------------------------------------
 
+
 class TestTrack:
     """Tests for Track dataclass."""
 
@@ -107,9 +109,16 @@ class TestTrack:
 
     def test_track_with_clips(self):
         clip = Clip(
-            name="c", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="video",
+            name="c",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="video",
             clip_type="Video",
         )
         track = Track(index=0, track_type="video", clips=(clip,))
@@ -129,6 +138,7 @@ class TestTrack:
 # ---------------------------------------------------------------------------
 # Sequence
 # ---------------------------------------------------------------------------
+
 
 class TestSequence:
     """Tests for Sequence dataclass."""
@@ -156,23 +166,31 @@ class TestSequence:
         assert seq._resolved is True
 
     def test_unresolved_clips_raises(self):
-        """Accessing clips on unresolved Sequence raises _UnresolvedAccessError (M3 fix)."""
-        seq = Sequence(name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000)
+        """Accessing clips on unresolved Sequence raises _UnresolvedAccessError."""
+        seq = Sequence(
+            name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000
+        )
         with pytest.raises(_UnresolvedAccessError):
             _ = seq.clips
 
     def test_unresolved_tracks_raises(self):
-        seq = Sequence(name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000)
+        seq = Sequence(
+            name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000
+        )
         with pytest.raises(_UnresolvedAccessError):
             _ = seq.tracks
 
     def test_unresolved_video_clips_raises(self):
-        seq = Sequence(name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000)
+        seq = Sequence(
+            name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000
+        )
         with pytest.raises(_UnresolvedAccessError):
             _ = seq.video_clips
 
     def test_unresolved_audio_clips_raises(self):
-        seq = Sequence(name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000)
+        seq = Sequence(
+            name="test", uid="uid", frame_rate=25.0, ticks_per_frame=10160640000
+        )
         with pytest.raises(_UnresolvedAccessError):
             _ = seq.audio_clips
 
@@ -184,14 +202,30 @@ class TestSequence:
 
     def test_clips_combines_video_and_audio(self):
         vc = Clip(
-            name="v", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="video", clip_type="Video",
+            name="v",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="video",
+            clip_type="Video",
         )
         ac = Clip(
-            name="a", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="audio", clip_type="Audio",
+            name="a",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="audio",
+            clip_type="Audio",
         )
         seq = self._make_resolved_sequence(video_clips=[vc], audio_clips=[ac])
         assert len(seq.clips) == 2
@@ -200,18 +234,34 @@ class TestSequence:
 
     def test_video_clips_property(self):
         vc = Clip(
-            name="v", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="video", clip_type="Video",
+            name="v",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="video",
+            clip_type="Video",
         )
         seq = self._make_resolved_sequence(video_clips=[vc])
         assert len(seq.video_clips) == 1
 
     def test_audio_clips_property(self):
         ac = Clip(
-            name="a", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="audio", clip_type="Audio",
+            name="a",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="audio",
+            clip_type="Audio",
         )
         seq = self._make_resolved_sequence(audio_clips=[ac])
         assert len(seq.audio_clips) == 1
@@ -223,14 +273,30 @@ class TestSequence:
 
     def test_get_clips_with_audio(self):
         vc = Clip(
-            name="v", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="video", clip_type="Video",
+            name="v",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="video",
+            clip_type="Video",
         )
         ac = Clip(
-            name="a", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="audio", clip_type="Audio",
+            name="a",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="audio",
+            clip_type="Audio",
         )
         seq = self._make_resolved_sequence(video_clips=[vc], audio_clips=[ac])
         assert len(seq.get_clips(include_audio=True)) == 2
@@ -238,9 +304,17 @@ class TestSequence:
 
     def test_iter_clips(self):
         vc = Clip(
-            name="v", start_ticks=0, end_ticks=1, start_seconds=0.0,
-            end_seconds=1.0, start_timecode="00:00:00", end_timecode="00:00:01",
-            duration_seconds=1.0, track_index=0, track_type="video", clip_type="Video",
+            name="v",
+            start_ticks=0,
+            end_ticks=1,
+            start_seconds=0.0,
+            end_seconds=1.0,
+            start_timecode="00:00:00",
+            end_timecode="00:00:01",
+            duration_seconds=1.0,
+            track_index=0,
+            track_type="video",
+            clip_type="Video",
         )
         seq = self._make_resolved_sequence(video_clips=[vc])
         clips = list(seq.iter_clips())
@@ -258,6 +332,7 @@ class TestSequence:
 # Project
 # ---------------------------------------------------------------------------
 
+
 class TestProject:
     """Tests for Project dataclass."""
 
@@ -269,18 +344,34 @@ class TestProject:
     def test_sequence_names_property(self):
         """sequence_names is a property (not a method)."""
         seq = Sequence._from_resolved(
-            name="Seq1", uid="uid-1", frame_rate=25.0, ticks_per_frame=10160640000,
-            duration_ticks=0, duration_seconds=0.0, video_track_count=0,
-            audio_track_count=0, video_clips=[], audio_clips=[], tracks=[],
+            name="Seq1",
+            uid="uid-1",
+            frame_rate=25.0,
+            ticks_per_frame=10160640000,
+            duration_ticks=0,
+            duration_seconds=0.0,
+            video_track_count=0,
+            audio_track_count=0,
+            video_clips=[],
+            audio_clips=[],
+            tracks=[],
         )
         proj = Project(file_path="test.prproj", sequences=[seq])
         assert proj.sequence_names == ["Seq1"]
 
     def test_get_sequence_found(self):
         seq = Sequence._from_resolved(
-            name="MySeq", uid="uid-1", frame_rate=25.0, ticks_per_frame=10160640000,
-            duration_ticks=0, duration_seconds=0.0, video_track_count=0,
-            audio_track_count=0, video_clips=[], audio_clips=[], tracks=[],
+            name="MySeq",
+            uid="uid-1",
+            frame_rate=25.0,
+            ticks_per_frame=10160640000,
+            duration_ticks=0,
+            duration_seconds=0.0,
+            video_track_count=0,
+            audio_track_count=0,
+            video_clips=[],
+            audio_clips=[],
+            tracks=[],
         )
         proj = Project(file_path="test.prproj", sequences=[seq])
         found = proj.get_sequence("MySeq")
