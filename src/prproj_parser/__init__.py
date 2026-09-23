@@ -23,10 +23,7 @@ except ImportError:
     # directly from a git checkout with no `pip install -e .` yet).
     __version__ = "0.0.0.dev0"
 
-from .models import Clip, MediaInfo, Project, Sequence, Track
-from .index import ProjectIndex, list_sequences_fast
-from .resolver import Resolver, resolve
-from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
+from ._compat import BACKEND
 from .clip_typing import classify_extension, detect_clip_type, find_extension
 from .exceptions import (
     PrprojError,
@@ -35,7 +32,10 @@ from .exceptions import (
     ReferenceNotFoundError,
     SequenceNotFoundError,
 )
-from ._compat import BACKEND
+from .index import ProjectIndex, list_sequences_fast
+from .models import Clip, MediaInfo, Project, Sequence, Track
+from .resolver import Resolver, resolve
+from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
 
 
 def load(file_path: str) -> Project:

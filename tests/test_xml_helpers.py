@@ -1,20 +1,19 @@
 """Tests for prproj_parser._xml_helpers module."""
 
-import pytest
 from xml.etree.ElementTree import Element, SubElement
 
 from prproj_parser._xml_helpers import (
+    find_all_children_local,
+    find_child_local,
+    findtext_local,
     local_name,
     safe_int,
-    findtext_local,
-    find_child_local,
-    find_all_children_local,
 )
-
 
 # ---------------------------------------------------------------------------
 # local_name
 # ---------------------------------------------------------------------------
+
 
 class TestLocalName:
     """Tests for local_name()."""
@@ -43,6 +42,7 @@ class TestLocalName:
 # ---------------------------------------------------------------------------
 # safe_int
 # ---------------------------------------------------------------------------
+
 
 class TestSafeInt:
     """Tests for safe_int()."""
@@ -74,6 +74,7 @@ class TestSafeInt:
 # ---------------------------------------------------------------------------
 # findtext_local
 # ---------------------------------------------------------------------------
+
 
 class TestFindtextLocal:
     """Tests for findtext_local()."""
@@ -112,6 +113,7 @@ class TestFindtextLocal:
 # find_child_local
 # ---------------------------------------------------------------------------
 
+
 class TestFindChildLocal:
     """Tests for find_child_local()."""
 
@@ -136,13 +138,14 @@ class TestFindChildLocal:
 # find_all_children_local
 # ---------------------------------------------------------------------------
 
+
 class TestFindAllChildrenLocal:
     """Tests for find_all_children_local()."""
 
     def test_finds_all_matching(self):
         parent = Element("Parent")
         c1 = SubElement(parent, "Track")
-        c2 = SubElement(parent, "Other")
+        SubElement(parent, "Other")
         c3 = SubElement(parent, "Track")
         result = find_all_children_local(parent, "Track")
         assert result == [c1, c3]

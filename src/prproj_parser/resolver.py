@@ -30,7 +30,8 @@ Reference chain (from ``prproj-structure.md``):
 
     MasterClip -> Media (deterministic chain):
       MasterClip > Clips > Clip[ObjectRef] -> VideoClip/AudioClip
-      VideoClip/AudioClip > Clip > Source[ObjectRef] -> VideoMediaSource/AudioMediaSource
+      VideoClip/AudioClip > Clip > Source[ObjectRef]
+        -> VideoMediaSource/AudioMediaSource
       VideoMediaSource/AudioMediaSource > ... > Media[ObjectURef] -> Media
 """
 
@@ -41,18 +42,17 @@ from io import BytesIO
 from typing import Dict, Iterator, List, Optional, Set, Tuple
 
 from ._compat import Element, iterparse
-from .index import ProjectIndex, _open_prproj_stream
-from .constants import DEFAULT_FPS
-from .models import Clip, MediaInfo, Project, Sequence, Track
-from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
-from .clip_typing import detect_clip_type
 from ._xml_helpers import (
-    find_all_children_local,
     find_child_local,
     findtext_local,
     local_name,
     safe_int,
 )
+from .clip_typing import detect_clip_type
+from .constants import DEFAULT_FPS
+from .index import ProjectIndex, _open_prproj_stream
+from .models import Clip, MediaInfo, Project, Sequence, Track
+from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
 
 logger = logging.getLogger(__name__)
 
@@ -114,9 +114,7 @@ def _build_chain_maps(
                                     src_ref = safe_int(source.get("ObjectRef"))
                                     if src_ref is not None:
                                         vc_to_source[obj_id] = src_ref
-                                speed_text = findtext_local(
-                                    clip_child, "PlaybackSpeed"
-                                )
+                                speed_text = findtext_local(clip_child, "PlaybackSpeed")
                                 if speed_text is not None:
                                     try:
                                         vc_to_speed[obj_id] = float(speed_text)
@@ -134,7 +132,9 @@ def _build_chain_maps(
                     elem.clear()
                 depth -= 1
     except Exception:
-        logger.debug("Chain map pass failed for %s, falling back to heuristic", file_path)
+        logger.debug(
+            "Chain map pass failed for %s, falling back to heuristic", file_path
+        )
 
     return vc_to_source, ms_to_media, vc_to_speed
 
@@ -365,9 +365,7 @@ class Resolver:
             if self._file_path:
                 self._chain_maps_cache = _build_chain_maps(self._file_path)
             elif self._xml_bytes:
-                self._chain_maps_cache = _build_chain_maps_from_bytes(
-                    self._xml_bytes
-                )
+                self._chain_maps_cache = _build_chain_maps_from_bytes(self._xml_bytes)
             else:
                 self._chain_maps_cache = ({}, {}, {})
         return self._chain_maps_cache
@@ -510,9 +508,7 @@ class Resolver:
 
             target = self._index.get_by_id(obj_ref)
             if target is None:
-                logger.debug(
-                    "TrackGroup Second ObjectRef=%d not found", obj_ref
-                )
+                logger.debug("TrackGroup Second ObjectRef=%d not found", obj_ref)
                 continue
 
             target_tag = local_name(target.tag)
@@ -526,9 +522,7 @@ class Resolver:
 
     # -- Frame rate extraction ----------------------------------------------
 
-    def _extract_frame_rate(
-        self, track_group_elem: Element
-    ) -> Tuple[int, float]:
+    def _extract_frame_rate(self, track_group_elem: Element) -> Tuple[int, float]:
         """Extract ticks-per-frame and FPS from a TrackGroup element.
 
         Looks for ``<TrackGroup> > <FrameRate>`` child.
@@ -589,16 +583,17 @@ class Resolver:
 
             track_elem = self._index.get_by_uid(obj_uref)
             if track_elem is None:
-                logger.debug(
-                    "Track ObjectURef=%s not found", obj_uref
-                )
+                logger.debug("Track ObjectURef=%s not found", obj_uref)
                 continue
 
             # Resolve clips on this track
             track_clips = list(
                 self._resolve_track_clips(
-                    track_elem, track_index, track_type,
-                    ticks_per_frame, fps,
+                    track_elem,
+                    track_index,
+                    track_type,
+                    ticks_per_frame,
+                    fps,
                 )
             )
 
@@ -651,9 +646,7 @@ class Resolver:
 
             ti_elem = self._index.get_by_id(obj_ref)
             if ti_elem is None:
-                logger.debug(
-                    "TrackItem ObjectRef=%d not found", obj_ref
-                )
+                logger.debug("TrackItem ObjectRef=%d not found", obj_ref)
                 continue
 
             clip = self._resolve_single_clip(

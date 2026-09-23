@@ -4,10 +4,9 @@ Provides minimal XML fixtures that mirror the Premiere Pro .prproj structure
 without requiring actual project files.
 """
 
+import gzip
 import os
 import sys
-import gzip
-import tempfile
 
 import pytest
 
@@ -255,6 +254,7 @@ def minimal_gzip_file(tmp_path):
 def minimal_index(minimal_xml):
     """Build a ProjectIndex from the minimal XML fixture."""
     from prproj_parser.index import ProjectIndex
+
     return ProjectIndex.from_xml_string(minimal_xml)
 
 
@@ -262,6 +262,7 @@ def minimal_index(minimal_xml):
 def minimal_project(minimal_gzip_file):
     """Load a fully-resolved Project from the minimal fixture."""
     from prproj_parser import load
+
     return load(minimal_gzip_file)
 
 

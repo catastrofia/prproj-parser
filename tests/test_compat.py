@@ -1,8 +1,6 @@
 """Tests for prproj_parser._compat module."""
 
-import pytest
-
-from prproj_parser._compat import iterparse, Element, BACKEND
+from prproj_parser._compat import BACKEND, Element, iterparse
 
 
 class TestCompat:
@@ -24,6 +22,7 @@ class TestCompat:
     def test_iterparse_works(self):
         """iterparse can parse a minimal XML document."""
         from io import BytesIO
+
         xml = b"<root><child/></root>"
         events = list(iterparse(BytesIO(xml), events=("end",)))
         tags = [elem.tag for _, elem in events]

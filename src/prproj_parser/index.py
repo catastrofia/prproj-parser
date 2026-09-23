@@ -4,15 +4,14 @@ from __future__ import annotations
 
 import gzip
 from contextlib import contextmanager
-from io import BytesIO
 from dataclasses import dataclass, field
-from typing import BinaryIO, Dict, Iterator, List, Optional, Union
+from io import BytesIO
+from typing import BinaryIO, Dict, Iterator, List, Optional, Union, cast
 
 from ._compat import Element, iterparse
 from ._xml_helpers import local_name, safe_int
 from .constants import INDEXED_TAGS
-from .exceptions import PrprojParseError, PrprojVersionError
-
+from .exceptions import PrprojParseError
 
 # ---------------------------------------------------------------------------
 # Shared stream opener (M4 fix)
@@ -49,9 +48,9 @@ def _open_prproj_stream(file_path: str) -> Iterator[BinaryIO]:
 
     try:
         if is_gzip:
-            f = gzip.open(file_path, "rb")
+            f = cast(BinaryIO, gzip.open(file_path, "rb"))
         else:
-            f = open(file_path, "rb")
+            f = cast(BinaryIO, open(file_path, "rb"))
         try:
             yield f
         finally:
@@ -192,9 +191,10 @@ class ProjectIndex:
         except PrprojParseError:
             raise
         except Exception as e:
-            if "xml" in str(type(e).__module__).lower() or "expat" in str(
-                type(e)
-            ).lower():
+            if (
+                "xml" in str(type(e).__module__).lower()
+                or "expat" in str(type(e)).lower()
+            ):
                 raise PrprojParseError(f"Invalid XML: {e}") from e
             raise
 
@@ -272,8 +272,6 @@ def list_sequences_fast(file_path: str) -> List[str]:
         except PrprojParseError:
             raise
         except Exception as e:
-            raise PrprojParseError(
-                f"Failed to parse {file_path}: {e}"
-            ) from e
+            raise PrprojParseError(f"Failed to parse {file_path}: {e}") from e
 
     return names
