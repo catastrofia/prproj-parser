@@ -25,6 +25,14 @@ classifiers = [
 fast = ["lxml>=4.9"]
 secure = ["defusedxml>=0.7"]
 all = ["lxml>=4.9", "defusedxml>=0.7"]
+dev = [
+    "build>=1.0",
+    "mypy>=1.8,<1.18",
+    "pre-commit>=3.5",
+    "pytest>=7.4",
+    "ruff>=0.6",
+    "twine>=5.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/catastrofia/prproj-parser"
@@ -35,3 +43,23 @@ where = ["src"]
 
 [tool.setuptools_scm]
 version_file = "src/prproj_parser/_version.py"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+extend-exclude = ["README.md", "prproj-structure.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+addopts = ["--strict-config", "--strict-markers"]
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.9"
+files = ["src/prproj_parser"]
+ignore_missing_imports = true
+warn_unused_configs = true
+check_untyped_defs = false
+disallow_untyped_defs = false
