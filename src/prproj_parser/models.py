@@ -17,12 +17,12 @@ Immutability policy
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Iterator, Tuple
-
+from typing import Iterator, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # MediaInfo
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class MediaInfo:
@@ -58,6 +58,7 @@ class MediaInfo:
 # ---------------------------------------------------------------------------
 # Clip
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class Clip:
@@ -120,6 +121,7 @@ class Clip:
 # Track
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class Track:
     """A single video or audio track in a sequence.
@@ -146,6 +148,7 @@ class Track:
 # ---------------------------------------------------------------------------
 # Sequence
 # ---------------------------------------------------------------------------
+
 
 class _UnresolvedAccessError(RuntimeError):
     """Raised when accessing clip/track data on an unresolved Sequence."""
@@ -360,6 +363,7 @@ class Sequence:
 # ---------------------------------------------------------------------------
 # Project
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class Project:

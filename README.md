@@ -72,9 +72,13 @@ See the module docstrings (`help(prproj_parser)`) for full API details — the p
 ## Development
 
 ```bash
-pip install -e ".[all]"
-pip install pytest
+python -m pip install -e ".[dev,all]"
+ruff check .
+ruff format --check .
+mypy src
 pytest
+python -m build
+python -m twine check dist/*
 ```
 
 ## License

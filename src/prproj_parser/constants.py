@@ -28,44 +28,105 @@ FPS_MAP: Dict[int, float] = {
 }
 
 # File extension sets for clip type detection
-VIDEO_EXTENSIONS: FrozenSet[str] = frozenset({
-    ".mp4", ".mov", ".avi", ".mxf", ".mkv", ".wmv", ".flv",
-    ".m4v", ".mpg", ".mpeg", ".m2v", ".m2t", ".m2ts", ".mts",
-    ".ts", ".vob", ".3gp", ".webm", ".r3d", ".braw", ".ari",
-    ".arx", ".dpx", ".exr", ".dng", ".crm", ".cine",
-})
+VIDEO_EXTENSIONS: FrozenSet[str] = frozenset(
+    {
+        ".mp4",
+        ".mov",
+        ".avi",
+        ".mxf",
+        ".mkv",
+        ".wmv",
+        ".flv",
+        ".m4v",
+        ".mpg",
+        ".mpeg",
+        ".m2v",
+        ".m2t",
+        ".m2ts",
+        ".mts",
+        ".ts",
+        ".vob",
+        ".3gp",
+        ".webm",
+        ".r3d",
+        ".braw",
+        ".ari",
+        ".arx",
+        ".dpx",
+        ".exr",
+        ".dng",
+        ".crm",
+        ".cine",
+    }
+)
 
-AUDIO_EXTENSIONS: FrozenSet[str] = frozenset({
-    ".wav", ".mp3", ".aac", ".aif", ".aiff", ".flac", ".ogg",
-    ".wma", ".m4a", ".opus", ".ac3", ".eac3",
-})
+AUDIO_EXTENSIONS: FrozenSet[str] = frozenset(
+    {
+        ".wav",
+        ".mp3",
+        ".aac",
+        ".aif",
+        ".aiff",
+        ".flac",
+        ".ogg",
+        ".wma",
+        ".m4a",
+        ".opus",
+        ".ac3",
+        ".eac3",
+    }
+)
 
-IMAGE_EXTENSIONS: FrozenSet[str] = frozenset({
-    ".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".gif",
-    ".psd", ".psb", ".ai", ".svg", ".webp", ".ico", ".heic",
-    ".heif", ".raw", ".cr2", ".nef", ".orf",
-})
+IMAGE_EXTENSIONS: FrozenSet[str] = frozenset(
+    {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".tif",
+        ".tiff",
+        ".bmp",
+        ".gif",
+        ".psd",
+        ".psb",
+        ".ai",
+        ".svg",
+        ".webp",
+        ".ico",
+        ".heic",
+        ".heif",
+        ".raw",
+        ".cr2",
+        ".nef",
+        ".orf",
+    }
+)
 
-GRAPHIC_EXTENSIONS: FrozenSet[str] = frozenset({
-    ".mogrt", ".prtl", ".prsl",
-})
+GRAPHIC_EXTENSIONS: FrozenSet[str] = frozenset(
+    {
+        ".mogrt",
+        ".prtl",
+        ".prsl",
+    }
+)
 
 # Element tag names that the indexer should keep in memory.
 # All other elements are cleared during iterparse to save memory.
-INDEXED_TAGS: FrozenSet[str] = frozenset({
-    "Sequence",
-    "VideoTrackGroup",
-    "AudioTrackGroup",
-    "VideoClipTrack",
-    "AudioClipTrack",
-    "VideoClipTrackItem",
-    "AudioClipTrackItem",
-    "SubClip",
-    "MasterClip",
-    "ClipProjectItem",
-    "Media",
-    "BinProjectItem",
-})
+INDEXED_TAGS: FrozenSet[str] = frozenset(
+    {
+        "Sequence",
+        "VideoTrackGroup",
+        "AudioTrackGroup",
+        "VideoClipTrack",
+        "AudioClipTrack",
+        "VideoClipTrackItem",
+        "AudioClipTrackItem",
+        "SubClip",
+        "MasterClip",
+        "ClipProjectItem",
+        "Media",
+        "BinProjectItem",
+    }
+)
 
 # Ticks per second in Premiere Pro (254016000000)
 TICKS_PER_SECOND: int = 254016000000

@@ -1,13 +1,15 @@
 """Tests for prproj_parser.clip_typing module."""
 
-import pytest
-
-from prproj_parser.clip_typing import find_extension, classify_extension, detect_clip_type
-
+from prproj_parser.clip_typing import (
+    classify_extension,
+    detect_clip_type,
+    find_extension,
+)
 
 # ---------------------------------------------------------------------------
 # find_extension
 # ---------------------------------------------------------------------------
+
 
 class TestFindExtension:
     """Tests for find_extension()."""
@@ -62,6 +64,7 @@ class TestFindExtension:
 # classify_extension
 # ---------------------------------------------------------------------------
 
+
 class TestClassifyExtension:
     """Tests for classify_extension()."""
 
@@ -95,6 +98,7 @@ class TestClassifyExtension:
 # ---------------------------------------------------------------------------
 # detect_clip_type
 # ---------------------------------------------------------------------------
+
 
 class TestDetectClipType:
     """Tests for detect_clip_type()."""
