@@ -2,13 +2,13 @@
 
 import pytest
 
-from prproj_parser.timecode import detect_fps, ticks_to_seconds, seconds_to_timecode
-from prproj_parser.constants import TICKS_PER_SECOND, DEFAULT_FPS
-
+from prproj_parser.constants import DEFAULT_FPS, TICKS_PER_SECOND
+from prproj_parser.timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
 
 # ---------------------------------------------------------------------------
 # detect_fps
 # ---------------------------------------------------------------------------
+
 
 class TestDetectFps:
     """Tests for detect_fps()."""
@@ -73,6 +73,7 @@ class TestDetectFps:
 # ticks_to_seconds
 # ---------------------------------------------------------------------------
 
+
 class TestTicksToSeconds:
     """Tests for ticks_to_seconds()."""
 
@@ -106,6 +107,7 @@ class TestTicksToSeconds:
 # ---------------------------------------------------------------------------
 # seconds_to_timecode
 # ---------------------------------------------------------------------------
+
 
 class TestSecondsToTimecode:
     """Tests for seconds_to_timecode()."""

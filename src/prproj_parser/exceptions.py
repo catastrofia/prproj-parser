@@ -11,6 +11,7 @@ class PrprojParseError(PrprojError):
 
 class PrprojVersionError(PrprojError):
     """Raised when the PremiereData version is unsupported."""
+
     def __init__(self, version: str):
         self.version = version
         super().__init__(f"Unsupported PremiereData version: {version!r}")
@@ -18,6 +19,7 @@ class PrprojVersionError(PrprojError):
 
 class ReferenceNotFoundError(PrprojError):
     """Raised when an ObjectRef/ObjectURef points to a non-existent element."""
+
     def __init__(self, ref_type: str, ref_value: str):
         self.ref_type = ref_type
         self.ref_value = ref_value
@@ -26,6 +28,7 @@ class ReferenceNotFoundError(PrprojError):
 
 class SequenceNotFoundError(PrprojError):
     """Raised when a requested sequence name does not exist."""
+
     def __init__(self, name: str):
         self.name = name
         super().__init__(f"Sequence {name!r} not found in project")

@@ -13,25 +13,37 @@ Exports:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING
 
-# ---------------------------------------------------------------------------
-# Backend selection
-# ---------------------------------------------------------------------------
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element as Element
+    from xml.etree.ElementTree import iterparse as iterparse
 
-try:
-    # Secure backend: defusedxml wraps stdlib ET with entity-expansion guards
-    from defusedxml.ElementTree import iterparse as _iterparse  # type: ignore[import-untyped]
-    from xml.etree.ElementTree import Element as Element  # noqa: F401
-    BACKEND: str = "defusedxml"
-except ImportError:
+    BACKEND: str
+else:
+    # ---------------------------------------------------------------------------
+    # Backend selection
+    # ---------------------------------------------------------------------------
+
     try:
-        from lxml.etree import iterparse as _iterparse  # type: ignore[assignment]
-        from lxml.etree import _Element as Element  # type: ignore[assignment] # noqa: F401
-        BACKEND = "lxml"
-    except ImportError:
-        from xml.etree.ElementTree import iterparse as _iterparse  # type: ignore[assignment]
-        from xml.etree.ElementTree import Element as Element  # noqa: F401
-        BACKEND = "stdlib"
+        import xml.etree.ElementTree as _stdlib_et
 
-iterparse = _iterparse
+        from defusedxml.ElementTree import iterparse as _iterparse
+
+        Element = _stdlib_et.Element
+        BACKEND: str = "defusedxml"
+    except ImportError:
+        try:
+            import lxml.etree as _lxml_et
+
+            Element = _lxml_et._Element
+            _iterparse = _lxml_et.iterparse
+            BACKEND = "lxml"
+        except ImportError:
+            import xml.etree.ElementTree as _stdlib_et
+
+            Element = _stdlib_et.Element
+            _iterparse = _stdlib_et.iterparse
+            BACKEND = "stdlib"
+
+    iterparse = _iterparse

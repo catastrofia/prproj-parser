@@ -2,19 +2,16 @@
 
 import gzip
 
-import pytest
-
 from prproj_parser.index import ProjectIndex
+from prproj_parser.models import Project
 from prproj_parser.resolver import (
     Resolver,
-    resolve,
     _build_chain_maps,
     _build_chain_maps_from_bytes,
     _build_masterclip_to_media_map,
     _extract_media_info,
+    resolve,
 )
-from prproj_parser.models import Project, Sequence, Clip, MediaInfo
-
 
 # ---------------------------------------------------------------------------
 # XML fixture with deterministic chain elements
@@ -202,6 +199,7 @@ CHAIN_XML = """\
 # _build_chain_maps_from_bytes
 # ---------------------------------------------------------------------------
 
+
 class TestBuildChainMaps:
     """Tests for _build_chain_maps_from_bytes()."""
 
@@ -287,6 +285,7 @@ class TestBuildChainMapsFromFile:
 # _build_masterclip_to_media_map
 # ---------------------------------------------------------------------------
 
+
 class TestBuildMasterclipToMediaMap:
     """Tests for _build_masterclip_to_media_map()."""
 
@@ -317,11 +316,13 @@ class TestBuildMasterclipToMediaMap:
 # _extract_media_info
 # ---------------------------------------------------------------------------
 
+
 class TestExtractMediaInfo:
     """Tests for _extract_media_info()."""
 
     def test_extracts_all_fields(self):
         from xml.etree.ElementTree import Element, SubElement
+
         media = Element("Media")
         SubElement(media, "FilePath").text = "/path/file.mp4"
         SubElement(media, "Title").text = "file.mp4"
@@ -336,6 +337,7 @@ class TestExtractMediaInfo:
 
     def test_missing_fields_are_none(self):
         from xml.etree.ElementTree import Element
+
         media = Element("Media")
         info = _extract_media_info(media)
         assert info.file_path is None
@@ -345,6 +347,7 @@ class TestExtractMediaInfo:
 # ---------------------------------------------------------------------------
 # Resolver
 # ---------------------------------------------------------------------------
+
 
 class TestResolver:
     """Tests for Resolver class."""
@@ -433,6 +436,7 @@ class TestResolver:
 # ---------------------------------------------------------------------------
 # resolve() convenience function
 # ---------------------------------------------------------------------------
+
 
 class TestResolveFunction:
     """Tests for the resolve() convenience function."""

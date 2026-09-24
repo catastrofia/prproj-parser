@@ -4,7 +4,7 @@ Ported and improved from the original app's ``components/time_converter.py``.
 All functions are pure (no global state, no logging side-effects).
 """
 
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from .constants import DEFAULT_FPS, FPS_MAP, TICKS_PER_SECOND
 
@@ -63,6 +63,7 @@ def detect_fps(raw_frame_rate: int) -> Tuple[float, bool]:
 # Tick → seconds conversion
 # ---------------------------------------------------------------------------
 
+
 def ticks_to_seconds(
     ticks: int,
     ticks_per_frame: int,
@@ -96,6 +97,7 @@ def ticks_to_seconds(
 # ---------------------------------------------------------------------------
 # Seconds → timecode formatting
 # ---------------------------------------------------------------------------
+
 
 def seconds_to_timecode(
     seconds: float,
@@ -138,5 +140,3 @@ def seconds_to_timecode(
     mm = (s_round % 3600) // 60
     ss = s_round % 60
     return f"{sign}{hh:02d}:{mm:02d}:{ss:02d}"
-
-

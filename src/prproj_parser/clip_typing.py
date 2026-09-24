@@ -8,7 +8,12 @@ reference chain in the resolver.
 import re
 from typing import Optional, Tuple
 
-from .constants import VIDEO_EXTENSIONS, AUDIO_EXTENSIONS, IMAGE_EXTENSIONS, GRAPHIC_EXTENSIONS
+from .constants import (
+    AUDIO_EXTENSIONS,
+    GRAPHIC_EXTENSIONS,
+    IMAGE_EXTENSIONS,
+    VIDEO_EXTENSIONS,
+)
 
 # Pre-compiled pattern for extracting file extensions
 _EXT_PATTERN = re.compile(r"\.([a-z0-9]{2,20})(?:\b|$)")
@@ -19,15 +24,29 @@ _EXT_PATTERN = re.compile(r"\.([a-z0-9]{2,20})(?:\b|$)")
 _SYNTHETIC_PATH_PATTERN = re.compile(r"^\d+$")
 
 # Keywords that suggest a graphic/title clip when no extension is found
-_GRAPHIC_KEYWORDS = frozenset({
-    "graphic", "title", "caption", "overlay", "lowerthird",
-    "lower third", "grad", "template", "mogrt",
-})
+_GRAPHIC_KEYWORDS = frozenset(
+    {
+        "graphic",
+        "title",
+        "caption",
+        "overlay",
+        "lowerthird",
+        "lower third",
+        "grad",
+        "template",
+        "mogrt",
+    }
+)
 
 # Folder names that suggest graphic content
-_GRAPHIC_FOLDERS = frozenset({
-    "graphics", "templates", "motion graphics", "mogrt",
-})
+_GRAPHIC_FOLDERS = frozenset(
+    {
+        "graphics",
+        "templates",
+        "motion graphics",
+        "mogrt",
+    }
+)
 
 
 def find_extension(text: Optional[str]) -> Optional[str]:

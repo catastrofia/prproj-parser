@@ -1,18 +1,14 @@
 """Tests for prproj_parser.index module."""
 
-import gzip
-import os
-import tempfile
-
 import pytest
 
-from prproj_parser.index import ProjectIndex, list_sequences_fast, _open_prproj_stream
 from prproj_parser.exceptions import PrprojParseError
-
+from prproj_parser.index import ProjectIndex, _open_prproj_stream, list_sequences_fast
 
 # ---------------------------------------------------------------------------
 # _open_prproj_stream
 # ---------------------------------------------------------------------------
+
 
 class TestOpenPrprojStream:
     """Tests for _open_prproj_stream() context manager (M4 fix)."""
@@ -54,13 +50,14 @@ class TestOpenPrprojStream:
 
     def test_raises_on_missing_file(self):
         with pytest.raises(PrprojParseError, match="Failed to open"):
-            with _open_prproj_stream("/nonexistent/file.prproj") as f:
+            with _open_prproj_stream("/nonexistent/file.prproj"):
                 pass
 
 
 # ---------------------------------------------------------------------------
 # ProjectIndex
 # ---------------------------------------------------------------------------
+
 
 class TestProjectIndex:
     """Tests for ProjectIndex."""
@@ -133,6 +130,7 @@ class TestProjectIndex:
 # ---------------------------------------------------------------------------
 # list_sequences_fast
 # ---------------------------------------------------------------------------
+
 
 class TestListSequencesFast:
     """Tests for list_sequences_fast()."""

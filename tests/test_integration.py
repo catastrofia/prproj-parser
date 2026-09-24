@@ -4,15 +4,13 @@ Tests the full load() pipeline and list_sequences() with both minimal
 fixtures and real project files (when available).
 """
 
-import pytest
-
-from prproj_parser import load, list_sequences, BACKEND
-from prproj_parser.models import Project, Sequence, Clip, Track
-
+from prproj_parser import list_sequences, load
+from prproj_parser.models import Project
 
 # ---------------------------------------------------------------------------
 # Minimal fixture integration
 # ---------------------------------------------------------------------------
+
 
 class TestMinimalProjectIntegration:
     """End-to-end tests using the minimal XML fixture."""
@@ -99,6 +97,7 @@ class TestMinimalProjectIntegration:
 # ---------------------------------------------------------------------------
 # Real project integration (skipped if files not available)
 # ---------------------------------------------------------------------------
+
 
 class TestRealProjectIntegration:
     """Integration tests with real Premiere Pro project files.
