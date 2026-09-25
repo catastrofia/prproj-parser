@@ -1,0 +1,73 @@
+name: Bug report
+description: Report broken or incorrect behavior
+title: "Bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Do not attach full real `.prproj` files; they can contain local paths, names, and client info.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a tiny synthetic/minimized fixture or snippet when possible.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback or error output
+      description: Paste the traceback if one was produced, but redact private paths, names, and client info.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: prproj-parser version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12"
+    validations:
+      required: true
+  - type: input
+    id: premiere
+    attributes:
+      label: Premiere Pro version, if relevant
+      placeholder: "2026"
+  - type: textarea
+    id: sample
+    attributes:
+      label: Minimal sample
+      description: Paste only redacted/minimized XML or describe why no sample can be shared.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
