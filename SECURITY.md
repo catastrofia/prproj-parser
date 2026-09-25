@@ -6,7 +6,7 @@ Only the latest release receives security fixes.
 
 ## Reporting a vulnerability
 
-Use GitHub private vulnerability reporting if it is enabled for this repository. If it is not enabled and no private maintainer contact is listed on GitHub, open a public issue asking for a private reporting channel without including exploit details or private `.prproj` content.
+Use GitHub private vulnerability reporting if it is enabled for this repository. If it is not enabled, use the private maintainer contact listed on GitHub. If no private contact is available, open a public issue asking for a private reporting channel without including exploit details or private `.prproj` content.
 
 ## Scope
 
