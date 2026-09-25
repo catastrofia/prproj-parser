@@ -18,6 +18,7 @@
   - [ ] `pytest`
   - [ ] `python -m build`
   - [ ] `python -m twine check dist/*`
+- [ ] CI is passing or expected failures are explained.
 
 <!-- Maintainers:
 - Confirm default branch protection and required CI still cover this change.

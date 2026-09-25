@@ -17,4 +17,4 @@ We want this project to be useful and welcoming.
 
 ## Enforcement
 
-Maintainers may edit, hide, or remove comments; close issues or PRs; or block participants who violate this code. Report problems through GitHub private vulnerability reporting if available, or open a minimal public issue asking for a private maintainer contact without including private details.
+Maintainers may edit, hide, or remove comments; close issues or PRs; or block participants who violate this code. Report problems through the private maintainer contact listed on GitHub. If no private contact is available, open a minimal public issue asking for a private contact without including private details.

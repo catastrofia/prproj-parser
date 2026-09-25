@@ -41,7 +41,7 @@ body:
     id: traceback
     attributes:
       label: Traceback or error output
-      description: Paste the full traceback if one was produced.
+      description: Paste the traceback if one was produced, but redact private paths, names, and client info.
       render: text
   - type: input
     id: version
