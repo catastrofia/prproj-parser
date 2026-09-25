@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest a focused improvement
+title: "Feature: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For non-trivial API, behavior, compatibility, dependency, or security changes, please discuss before opening a large PR.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user need does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Keep the smallest useful version in scope.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include why stdlib/current dependencies are insufficient if this needs a new dependency.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility impact
+      description: Python versions, Premiere Pro versions, XML backends, API changes, or migration notes.
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sample data
+      description: Use only tiny synthetic/minimized fixtures. Do not attach full real projects.
