@@ -10,6 +10,16 @@ purposes.
 
 This reference covers the elements you actually need, with sanitized examples taken from test projects. Elements are grouped by role.
 
+## Contents
+
+- [Project-level](#project-level)
+- [Sequences and tracks](#sequences-and-tracks)
+- [Clips on the timeline](#clips-on-the-timeline)
+- [Effects](#effects)
+- [Markers](#markers)
+- [Linking video and audio](#linking-video-and-audio)
+- [Captions](#captions)
+
 ## Project-level
 
 ### `Project`
@@ -347,6 +357,7 @@ The actual file reference — the disk path, in Premiere's own bookkeeping
 format:
 
 ```xml
+<!-- Synthetic sanitized path example -->
 <Media ObjectUID="90aedb11-761b-462b-8b6c-e9382c1b43c9" ... Version="28">
     <VideoStream ObjectRef="1004"/>
     <RelativePath>.\IN\clip.mov</RelativePath>
@@ -435,6 +446,8 @@ element type in this schema — an adjustment layer is an ordinary `Media`/
 Color is an ordinary `VideoFilterComponent` with
 `<MatchName>AE.ADBE Lumetri</MatchName>` — both fit the patterns already
 described above and in [Media](#media) without any special-casing.
+
+<a id="keyframed-values"></a>
 
 ### `VideoComponentParam` / `AudioComponentParam` and keyframed values
 

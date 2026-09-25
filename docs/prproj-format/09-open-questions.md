@@ -42,7 +42,7 @@ multi-format-run or styled captions.
 
 ## The exact per-field meaning of the `<Keyframes>` animation-curve format
 
-Covered in [Element Reference](04-elements.md#videocomponentparam--audiocomponentparam-and-keyframed-values).
+Covered in [Element Reference](04-elements.md#keyframed-values).
 Confirmed: `<Keyframes>` on an animated `VideoComponentParam`/
 `AudioComponentParam`/`TimeComponentParam` is a `;`-separated list of
 `,`-separated tuples, where the first field is a tick position and the

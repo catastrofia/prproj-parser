@@ -9,7 +9,7 @@ traces back to one of the checks described below.
 
 ## Source material
 
-A private corpus of `.prproj` files was inspected. These were real-world project files rather than synthetic samples, but private filenames, local paths, corpus size details, and subject matter have been removed from these public notes. The corpus still covered nested sequences, captions, transitions, multi-cam-style audio links, color mattes, still graphics, and accumulated UI preference data.
+A private corpus of `.prproj` files was inspected. These were real-world project files rather than synthetic samples, but private filenames, local paths, corpus size details, and subject matter have been removed from these public notes. The corpus still covered nested sequences, captions, transitions, multi-cam-style audio links, color mattes, still graphics, and accumulated UI preference data. Before migration, these public notes were checked for known private source paths, project prefixes, client/story titles, and caption/font strings from the source corpus.
 
 Crucially, several files are **the same source project, re-saved multiple
 times as the editor upgraded Premiere Pro**. For example:
@@ -102,13 +102,12 @@ Two apparent "version pairs" turned out to be exact byte-for-byte duplicates and
    files representing the same edit at two different Project Versions, a
    script counted how many `<TrackItem Version="N">` blocks were missing a
    `<Start>` child. The result was consistent and reproducible across three
-independent projects: at Project Version ≤ 43, no blocks omitted
-    `<Start>`; at Project Version 45, a `TrackItem` schema bump to
-    `Version="4"` appears, and clips whose timeline start is `0` omit the
-    `<Start>` element entirely, always matching clips known to start at the
-    very beginning of a track. Full detail, including a representative before/after
-
-   XML diff of the same clip, is in [03-versions.md](03-versions.md).
+   independent projects: at Project Version ≤ 43, no blocks omitted
+   `<Start>`; at Project Version 45, a `TrackItem` schema bump to
+   `Version="4"` appears, and clips whose timeline start is `0` omit the
+   `<Start>` element entirely, always matching clips known to start at the
+   very beginning of a track. Full detail, including a representative
+   before/after XML diff of the same clip, is in [03-versions.md](03-versions.md).
 
 8. **Built a version-delta matrix mechanically, not by memory.** A script
    walked every depth-2 element in every file in the corpus, grouped by
