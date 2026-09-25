@@ -1,6 +1,6 @@
 # The Object Model
 
-*Doc version 1.0 — 2026-09-18*
+*Doc version 1.1 — 2026-09-18*
 
 This is the single most important thing to understand about `.prproj`
 before trying to parse one.
@@ -142,3 +142,55 @@ for event, elem in ET.iterparse(path, events=("start", "end")):
 
 This depth check is the difference between a parser that works reliably and
 one that occasionally resolves a clip's start time to a random UI setting.
+
+## Parser cheat sheet
+
+For timeline/media extraction, keep top-level objects with these tags and clear
+other top-level objects after inspection when streaming large files:
+
+```python
+INDEXED_TAGS = {
+    "Sequence",
+    "VideoTrackGroup",
+    "AudioTrackGroup",
+    "DataTrackGroup",
+    "VideoClipTrack",
+    "AudioClipTrack",
+    "VideoClipTrackItem",
+    "AudioClipTrackItem",
+    "SubClip",
+    "MasterClip",
+    "VideoClip",
+    "AudioClip",
+    "ClipProjectItem",
+    "Media",
+    "VideoMediaSource",
+    "AudioMediaSource",
+    "VideoSequenceSource",
+    "AudioSequenceSource",
+    "CaptionDataClipTrack",
+    "CaptionDataClipTrackItem",
+    "BinProjectItem",
+}
+```
+
+Useful observed `ClassID` values for common core elements:
+
+| Tag | ClassID |
+|---|---|
+| `Sequence` | `6a15d903-8739-11d5-af2d-9b7855ad8974` |
+| `VideoTrackGroup` | `9e9abf7a-0918-49c2-91ae-991b5dde77bb` |
+| `AudioTrackGroup` | `9b9238b9-53a8-4cc3-b03f-b36246d052e6` |
+| `DataTrackGroup` | `b714b71d-6838-48dd-9b77-db19088ced7e` |
+| `VideoClipTrack` | `f68dcd81-8805-11d5-af2d-9bfa89d4ddd4` |
+| `VideoClipTrackItem` | `368b0406-29e3-4923-9fcd-094fbf9a1089` |
+| `AudioClipTrackItem` | `064ec682-9ba6-11d5-af2d-9ca32c7d6164` |
+| `SubClip` | `e0c58dc9-dbdd-4166-aef7-5db7e3f22e84` |
+| `MasterClip` | `fb11c33a-b0a9-4465-aa94-b6d5db2628cf` |
+| `ClipProjectItem` | `cb4e0ed7-aca1-4171-8525-e3658dec06dd` |
+| `Media` | `7a5c103e-f3ac-4391-b6b4-7cc3d2f9a7ff` |
+| `BinProjectItem` | `dbfd6653-24da-480e-a35e-ba45e9504e4b` |
+| `Markers` | `bee50706-b524-416c-9f03-b596ce5f6866` |
+
+Prefer tag names for parsing; use `ClassID` as a sanity check, not the primary
+key, unless you have evidence from your target files that tag names are unstable.

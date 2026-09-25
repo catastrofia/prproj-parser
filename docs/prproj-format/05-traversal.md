@@ -107,6 +107,7 @@ The clip sits from tick `0` to tick `1127831040000` on the timeline. See
 ```
 
 ```xml
+<!-- Synthetic sanitized path example -->
 <Media ObjectUID="90aedb11-761b-462b-8b6c-e9382c1b43c9" ... Version="28">
     <FilePath>C:\Media\Project\IN\clip.mov</FilePath>
 </Media>

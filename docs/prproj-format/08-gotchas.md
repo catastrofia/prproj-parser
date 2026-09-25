@@ -133,5 +133,7 @@ whole thing into a DOM (e.g. `xml.dom.minidom.parse` or a naive
 — UI panel state, per-column preferences, effect parameter defaults — is
 irrelevant to timeline/media extraction. Use an incremental parser
 (`ElementTree.iterparse` in Python, or the equivalent streaming parser in
-your language) and call `.clear()` on elements you don't need to keep
-referenced, once you've read what you need from them.
+your language), keep only the top-level timeline/media objects listed in the
+[parser cheat sheet](02-object-model.md#parser-cheat-sheet), and call
+`.clear()` on elements you don't need to keep referenced once you've read what
+you need from them.
