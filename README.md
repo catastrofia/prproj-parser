@@ -69,6 +69,10 @@ See the module docstrings (`help(prproj_parser)`) for full API details — the p
 - **Speed ramps / time remapping** (as opposed to a single constant speed) report the clip's base `PlaybackSpeed` value; keyframed speed changes over the clip's duration are not modeled.
 - Verified against Premiere Pro project files from versions 2023–2026 (`PremiereData Version="3"`). Older/newer formats are untested.
 
+## `.prproj` format notes
+
+Contributor/reference docs live in [docs/prproj-format/](docs/prproj-format/00-overview.md). They are unofficial research notes based on observed project files, not an Adobe-authoritative spec.
+
 ## Development
 
 ```bash
