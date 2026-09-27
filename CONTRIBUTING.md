@@ -40,7 +40,7 @@ Add a `CHANGELOG.md` entry only for notable user-facing, API, compatibility, or 
 
 ## Release process
 
-Maintainers cut releases on demand when useful user-facing changes accumulate. A release PR updates `CHANGELOG.md`, version metadata if needed, and the release date. Release notes come from the dated `CHANGELOG.md` section. Maintainers tag and publish releases manually after CI passes.
+Maintainers cut releases on demand when useful user-facing changes accumulate. A release PR updates `CHANGELOG.md`, version metadata if needed, and the release date. Release notes come from the dated `CHANGELOG.md` section. For now, tags build and test release artifacts for a GitHub Release; PyPI publishing is manual/later and tags do not publish to PyPI.
 
 ## Labels
 
@@ -59,6 +59,7 @@ Maintainers cut releases on demand when useful user-facing changes accumulate. A
 - Require pull requests before merging to `main`.
 - Restrict merge access to maintainers.
 - Require CI status checks before merge.
+- Require approving review before merge.
 - Block force pushes and branch deletion on `main`.
 - Enable dependency graph and Dependabot/security alerts.
 - Enable private vulnerability reporting if available.
