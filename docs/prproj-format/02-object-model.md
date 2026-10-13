@@ -131,7 +131,7 @@ depth = 0
 for event, elem in ET.iterparse(path, events=("start", "end")):
     if event == "start":
         depth += 1
-        if depth == 2:                    # only the real top-level objects
+        if depth == 2:  # only the real top-level objects
             if "ObjectID" in elem.attrib:
                 by_id[elem.attrib["ObjectID"]] = elem
             if "ObjectUID" in elem.attrib:
