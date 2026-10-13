@@ -54,6 +54,10 @@ extend-exclude = ["README.md", "prproj-structure.md"]
 [tool.ruff.lint]
 select = ["E", "F", "I"]
 
+[tool.ruff.lint.per-file-ignores]
+# Benchmarks embed long XML template lines; wrapping them hurts readability.
+"benchmarks/*" = ["E501"]
+
 [tool.pytest.ini_options]
 addopts = ["--strict-config", "--strict-markers"]
 testpaths = ["tests"]
