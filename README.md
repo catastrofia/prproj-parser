@@ -20,7 +20,7 @@ pip install prproj-parser[all]     # both
 
 Requires Python 3.9+. No dependencies by default — falls back to the stdlib `xml.etree.ElementTree`.
 
-Parsing is single-pass and scales linearly: an 8,000-clip project loads in ~0.2 s on a typical laptop (see `benchmarks/`).
+Parsing is single-pass and scales linearly: an 8,000-clip project loads in ~0.2 s on a typical laptop on the default stdlib/defusedxml backends (smaller gains under the `lxml` extra; see `benchmarks/`).
 
 ## Quick start
 
