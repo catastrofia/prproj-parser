@@ -8,7 +8,10 @@ _NS_PATTERN = re.compile(r"\{[^}]*\}")
 # Memoized local names: element tags are highly repetitive in .prproj
 # files (a few hundred distinct tags across hundreds of thousands of
 # elements), so a dict lookup beats re-running the namespace regex.
+# Bounded to keep pathological inputs (dynamic/adversarial tag names)
+# from growing the process without limit.
 _LOCAL_NAME_CACHE: Dict[str, str] = {}
+_LOCAL_NAME_CACHE_MAX = 4096
 
 
 def local_name(tag) -> str:
@@ -19,13 +22,19 @@ def local_name(tag) -> str:
 
     Returns empty string for non-string tags (e.g. lxml Comment/PI
     functions or cleared element stubs).
+
+    Memoized with a bounded cache: real .prproj files contain a few
+    hundred distinct tags, so the cap only engages on pathological input
+    (dynamic/adversarial tag names), where it degrades to re-running the
+    regex instead of growing without limit.
     """
     if not isinstance(tag, str):
         return ""
     cached = _LOCAL_NAME_CACHE.get(tag)
     if cached is None:
         cached = _NS_PATTERN.sub("", tag)
-        _LOCAL_NAME_CACHE[tag] = cached
+        if len(_LOCAL_NAME_CACHE) < _LOCAL_NAME_CACHE_MAX:
+            _LOCAL_NAME_CACHE[tag] = cached
     return cached
 
 

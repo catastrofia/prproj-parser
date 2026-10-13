@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- `load()` no longer re-parses the file a second time for projects without
+  `VideoClip`/`MediaSource` elements (chain-free projects); the legacy
+  chain-map fallback now runs only for indexes built directly instead of
+  via the `from_*` builders.
+- Bounded the `local_name()` memoization cache (pathological inputs with
+  hundreds of thousands of distinct tags no longer grow the process
+  without limit).
+- `PrprojParseError` raised for invalid gzip files now chains the original
+  exception for clearer tracebacks.
+
 ## [0.1.0] - 2026-10-13
 
 Initial public release.
@@ -45,8 +59,8 @@ Initial public release.
   old cleanup cost, so gains there are smaller, ~1.5×). `list_sequences()`
   unchanged.
 - `_build_chain_maps()` / `_build_chain_maps_from_bytes()` are now thin
-  wrappers over the index's chain maps and are deprecated for hot-path
-  use; prefer `ProjectIndex.chain_maps()` (see the new
+  wrappers over the index's chain maps and are internal helpers (not for
+  hot-path use); prefer `ProjectIndex.chain_maps()` (see the new
   `tests/test_performance.py` architecture tests).
 - Namespace stripping in `local_name()` is memoized (element tags are
   highly repetitive across large project files).

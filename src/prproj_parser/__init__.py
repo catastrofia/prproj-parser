@@ -43,12 +43,11 @@ def load(file_path: str) -> Project:
 
     This is the primary high-level entry point.  It:
 
-    1. Decompresses the gzip file
-    2. Builds a :class:`ProjectIndex` via single-pass ``iterparse``
-    3. Runs a second lightweight iterparse pass to build deterministic
-       MasterClip -> Media chain maps
-    4. Resolves all reference chains into :class:`Sequence` / :class:`Clip`
-       objects
+    1. Decompresses the gzip file (or reads plain-XML files)
+    2. Builds a :class:`ProjectIndex` via a single ``iterparse`` pass that
+       also extracts the deterministic MasterClip -> Media chain maps
+    3. Resolves all reference chains into :class:`Sequence` / :class:`Clip`
+       objects using those maps
 
     Args:
         file_path: Path to the ``.prproj`` file.
