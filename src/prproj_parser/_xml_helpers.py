@@ -1,9 +1,14 @@
 """XML helper utilities: namespace handling, safe type parsing."""
 
 import re
-from typing import Optional, overload
+from typing import Dict, Optional, overload
 
 _NS_PATTERN = re.compile(r"\{[^}]*\}")
+
+# Memoized local names: element tags are highly repetitive in .prproj
+# files (a few hundred distinct tags across hundreds of thousands of
+# elements), so a dict lookup beats re-running the namespace regex.
+_LOCAL_NAME_CACHE: Dict[str, str] = {}
 
 
 def local_name(tag) -> str:
@@ -17,7 +22,11 @@ def local_name(tag) -> str:
     """
     if not isinstance(tag, str):
         return ""
-    return _NS_PATTERN.sub("", tag)
+    cached = _LOCAL_NAME_CACHE.get(tag)
+    if cached is None:
+        cached = _NS_PATTERN.sub("", tag)
+        _LOCAL_NAME_CACHE[tag] = cached
+    return cached
 
 
 @overload

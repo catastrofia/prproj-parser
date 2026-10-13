@@ -6,12 +6,22 @@ import gzip
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from io import BytesIO
-from typing import BinaryIO, Dict, Iterator, List, Optional, Union, cast
+from typing import BinaryIO, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 from ._compat import Element, iterparse
-from ._xml_helpers import local_name, safe_int
+from ._xml_helpers import (
+    find_child_local,
+    findtext_local,
+    local_name,
+    safe_int,
+)
 from .constants import INDEXED_TAGS
 from .exceptions import PrprojParseError
+
+# Chain-element tags extracted during the index pass (previously handled by
+# a separate second parse pass — see _build_chain_maps in resolver.py).
+_CLIP_TAGS = frozenset({"VideoClip", "AudioClip"})
+_MEDIA_SOURCE_TAGS = frozenset({"VideoMediaSource", "AudioMediaSource"})
 
 # ---------------------------------------------------------------------------
 # Shared stream opener (M4 fix)
@@ -81,6 +91,13 @@ class ProjectIndex:
     by_uid: Dict[str, Element] = field(default_factory=dict, repr=False)
     sequences: Dict[str, Element] = field(default_factory=dict, repr=False)
     version: Optional[str] = None
+    #: VideoClip/AudioClip ObjectID -> Source (VMS/AMS) ObjectRef.
+    #: Extracted during the same iterparse pass as the index (no second pass).
+    vc_to_source: Dict[int, int] = field(default_factory=dict, repr=False)
+    #: VMS/AMS ObjectID -> Media ObjectUID.
+    ms_to_media: Dict[int, str] = field(default_factory=dict, repr=False)
+    #: VideoClip/AudioClip ObjectID -> PlaybackSpeed multiplier.
+    vc_to_speed: Dict[int, float] = field(default_factory=dict, repr=False)
 
     def __repr__(self) -> str:
         """Compact repr that doesn't dump thousands of XML elements."""
@@ -131,13 +148,17 @@ class ProjectIndex:
         4. Children of indexed elements (depth 2+) are NEVER cleared
            independently — they are preserved as part of their parent
         5. Special handling for root <PremiereData> to capture version
-        6. After iteration, remove non-indexed direct children from root
+        6. Chain data (VideoClip/AudioClip → Source → Media, PlaybackSpeed)
+           is extracted in the SAME pass and stored on the index — there is
+           no second parse pass.
 
         The depth-aware clearing pattern:
         - Only depth-1 elements (direct children of <PremiereData>) are
           candidates for clearing. This prevents clearing <Name> or other
           sub-elements inside indexed parents like <Sequence>.
-        - After iteration, a cleanup pass removes cleared stubs from root.
+        - Non-indexed depth-1 children are simply not retained; the root
+          element is cleared once at the end (O(number-of-children), never
+          the O(n²) per-child remove() pattern).
         """
         index = cls()
 
@@ -145,6 +166,9 @@ class ProjectIndex:
             context = iterparse(stream, events=("start", "end"))
             root = None
             depth = 0
+            # Tag sets for the chain extraction, bound locally for speed.
+            clip_source_tags = _CLIP_TAGS
+            media_source_tags = _MEDIA_SOURCE_TAGS
 
             for event, elem in context:
                 if event == "start":
@@ -158,10 +182,9 @@ class ProjectIndex:
                     continue
 
                 # event == "end"
-                tag = local_name(elem.tag)
-
                 if depth == 2:
-                    # Direct child of root — decide keep or clear
+                    tag = local_name(elem.tag)
+                    # Direct child of root — decide keep, extract, or drop
                     if tag in INDEXED_TAGS:
                         obj_id = safe_int(elem.get("ObjectID"))
                         obj_uid = elem.get("ObjectUID")
@@ -175,18 +198,52 @@ class ProjectIndex:
                         if tag == "Sequence" and obj_uid:
                             index.sequences[obj_uid] = elem
                     else:
-                        # Not an indexed tag — free memory
+                        # Not retained as an element. Chain data is
+                        # extracted into the index maps, then the
+                        # element is freed.
+                        if tag in clip_source_tags:
+                            # VideoClip / AudioClip: Clip > Source +
+                            # PlaybackSpeed
+                            obj_id = safe_int(elem.get("ObjectID"))
+                            if obj_id is not None:
+                                clip_child = find_child_local(elem, "Clip")
+                                if clip_child is not None:
+                                    source = find_child_local(clip_child, "Source")
+                                    if source is not None:
+                                        src_ref = safe_int(source.get("ObjectRef"))
+                                        if src_ref is not None:
+                                            index.vc_to_source[obj_id] = src_ref
+                                    speed_text = findtext_local(
+                                        clip_child, "PlaybackSpeed"
+                                    )
+                                    if speed_text is not None:
+                                        try:
+                                            index.vc_to_speed[obj_id] = float(
+                                                speed_text
+                                            )
+                                        except ValueError:
+                                            pass
+                        elif tag in media_source_tags:
+                            # VMS / AMS: locate the Media ObjectURef
+                            obj_id = safe_int(elem.get("ObjectID"))
+                            if obj_id is not None:
+                                for child in elem.iter():
+                                    if local_name(child.tag) == "Media":
+                                        uref = child.get("ObjectURef")
+                                        if uref:
+                                            index.ms_to_media[obj_id] = uref
+                                            break
+                        # Free memory — this element is not retained
                         elem.clear()
 
                 depth -= 1
 
-            # Second cleanup pass: remove cleared children from root
-            # to fully release parent references
+            # Single cleanup pass: drop the root's entire child list at
+            # once. Never call root.remove(child) in a loop — that is
+            # O(n²) (each removal rescans the child list) and dominated
+            # wall-clock time on real projects.
             if root is not None:
-                for child in list(root):
-                    child_tag = local_name(child.tag)
-                    if child_tag not in INDEXED_TAGS:
-                        root.remove(child)
+                root.clear()
 
         except PrprojParseError:
             raise
@@ -199,6 +256,22 @@ class ProjectIndex:
             raise
 
         return index
+
+    def chain_maps(
+        self,
+    ) -> Tuple[Dict[int, int], Dict[int, str], Dict[int, float]]:
+        """Deterministic MasterClip→Media chain maps extracted at index time.
+
+        Returns:
+            ``(vc_to_source, ms_to_media, vc_to_speed)``:
+
+            - ``vc_to_source``: VideoClip/AudioClip ObjectID -> Source
+              (VideoMediaSource/AudioMediaSource) ObjectRef
+            - ``ms_to_media``: VMS/AMS ObjectID -> Media ObjectUID
+            - ``vc_to_speed``: VideoClip/AudioClip ObjectID ->
+              PlaybackSpeed multiplier (absent = normal speed)
+        """
+        return self.vc_to_source, self.ms_to_media, self.vc_to_speed
 
     def get_by_id(self, obj_id: int) -> Optional[Element]:
         """Look up an element by ObjectID. Returns None if not found."""
