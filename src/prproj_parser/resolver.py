@@ -38,10 +38,9 @@ Reference chain (from ``prproj-structure.md``):
 from __future__ import annotations
 
 import logging
-from io import BytesIO
 from typing import Dict, Iterator, List, Optional, Set, Tuple
 
-from ._compat import Element, iterparse
+from ._compat import Element
 from ._xml_helpers import (
     find_child_local,
     findtext_local,
@@ -50,7 +49,7 @@ from ._xml_helpers import (
 )
 from .clip_typing import detect_clip_type
 from .constants import DEFAULT_FPS
-from .index import ProjectIndex, _open_prproj_stream
+from .index import ProjectIndex
 from .models import Clip, MediaInfo, Project, Sequence, Track
 from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
 
@@ -64,22 +63,15 @@ logger = logging.getLogger(__name__)
 def _build_chain_maps(
     file_path: str,
 ) -> Tuple[Dict[int, int], Dict[int, str], Dict[int, float]]:
-    """Build deterministic reference chain maps via a second iterparse pass.
+    """Build deterministic reference chain maps for a ``.prproj`` file.
 
-    This lightweight pass extracts maps from elements that are NOT in
-    ``INDEXED_TAGS`` (``VideoClip``, ``AudioClip``, ``VideoMediaSource``,
-    ``AudioMediaSource``).  Every element is cleared immediately after
-    extraction, so memory overhead is near-zero.
-
-    The chain is::
-
-        MasterClip > Clips > Clip[ObjectRef] -> VideoClip/AudioClip (ObjectID)
-        VideoClip/AudioClip > Clip > Source[ObjectRef] -> VMS/AMS (ObjectID)
-        VideoClip/AudioClip > Clip > PlaybackSpeed -> speed multiplier
-        VMS/AMS > ... > Media[ObjectURef] -> Media (ObjectUID)
-
-    Args:
-        file_path: Path to the ``.prproj`` file (gzip-compressed XML).
+    .. deprecated:: Single-pass architecture.
+        Chain maps are now extracted by :class:`ProjectIndex` during its
+        own iterparse pass (see :meth:`ProjectIndex.chain_maps`). This
+        function remains for backward compatibility and simply builds a
+        throwaway index. New code should use the index's chain maps
+        directly — this re-parses the whole file and should not be called
+        in hot paths.
 
     Returns:
         A tuple of ``(vc_to_source, ms_to_media, vc_to_speed)`` where:
@@ -91,52 +83,13 @@ def _build_chain_maps(
         - ``vc_to_speed``: VideoClip/AudioClip ObjectID -> PlaybackSpeed
           multiplier (e.g. ``2.0`` for 2x speed). Absent = normal speed.
     """
-    vc_to_source: Dict[int, int] = {}
-    ms_to_media: Dict[int, str] = {}
-    vc_to_speed: Dict[int, float] = {}
-    depth = 0
-
     try:
-        with _open_prproj_stream(file_path) as f:
-            for event, elem in iterparse(f, events=("start", "end")):
-                if event == "start":
-                    depth += 1
-                    continue
-                if depth == 2:
-                    tag = local_name(elem.tag)
-                    if tag in ("VideoClip", "AudioClip"):
-                        obj_id = safe_int(elem.get("ObjectID"))
-                        if obj_id is not None:
-                            clip_child = find_child_local(elem, "Clip")
-                            if clip_child is not None:
-                                source = find_child_local(clip_child, "Source")
-                                if source is not None:
-                                    src_ref = safe_int(source.get("ObjectRef"))
-                                    if src_ref is not None:
-                                        vc_to_source[obj_id] = src_ref
-                                speed_text = findtext_local(clip_child, "PlaybackSpeed")
-                                if speed_text is not None:
-                                    try:
-                                        vc_to_speed[obj_id] = float(speed_text)
-                                    except ValueError:
-                                        pass
-                    elif tag in ("VideoMediaSource", "AudioMediaSource"):
-                        obj_id = safe_int(elem.get("ObjectID"))
-                        if obj_id is not None:
-                            for child in elem.iter():
-                                if local_name(child.tag) == "Media":
-                                    uref = child.get("ObjectURef")
-                                    if uref:
-                                        ms_to_media[obj_id] = uref
-                                        break
-                    elem.clear()
-                depth -= 1
+        return ProjectIndex.from_file(file_path).chain_maps()
     except Exception:
         logger.debug(
             "Chain map pass failed for %s, falling back to heuristic", file_path
         )
-
-    return vc_to_source, ms_to_media, vc_to_speed
+    return {}, {}, {}
 
 
 def _build_chain_maps_from_bytes(
@@ -144,52 +97,15 @@ def _build_chain_maps_from_bytes(
 ) -> Tuple[Dict[int, int], Dict[int, str], Dict[int, float]]:
     """Build chain maps from raw XML bytes (for testing / in-memory use).
 
-    Same logic as :func:`_build_chain_maps` but operates on bytes instead
-    of a file path.
+    .. deprecated:: Single-pass architecture.
+        See :func:`_build_chain_maps` — this is a thin wrapper over
+        :meth:`ProjectIndex.from_xml_bytes` + :meth:`ProjectIndex.chain_maps`.
     """
-    vc_to_source: Dict[int, int] = {}
-    ms_to_media: Dict[int, str] = {}
-    vc_to_speed: Dict[int, float] = {}
-    depth = 0
-
     try:
-        for event, elem in iterparse(BytesIO(xml_bytes), events=("start", "end")):
-            if event == "start":
-                depth += 1
-                continue
-            if depth == 2:
-                tag = local_name(elem.tag)
-                if tag in ("VideoClip", "AudioClip"):
-                    obj_id = safe_int(elem.get("ObjectID"))
-                    if obj_id is not None:
-                        clip_child = find_child_local(elem, "Clip")
-                        if clip_child is not None:
-                            source = find_child_local(clip_child, "Source")
-                            if source is not None:
-                                src_ref = safe_int(source.get("ObjectRef"))
-                                if src_ref is not None:
-                                    vc_to_source[obj_id] = src_ref
-                            speed_text = findtext_local(clip_child, "PlaybackSpeed")
-                            if speed_text is not None:
-                                try:
-                                    vc_to_speed[obj_id] = float(speed_text)
-                                except ValueError:
-                                    pass
-                elif tag in ("VideoMediaSource", "AudioMediaSource"):
-                    obj_id = safe_int(elem.get("ObjectID"))
-                    if obj_id is not None:
-                        for child in elem.iter():
-                            if local_name(child.tag) == "Media":
-                                uref = child.get("ObjectURef")
-                                if uref:
-                                    ms_to_media[obj_id] = uref
-                                    break
-                elem.clear()
-            depth -= 1
+        return ProjectIndex.from_xml_bytes(xml_bytes).chain_maps()
     except Exception:
         logger.debug("Chain map pass from bytes failed, falling back to heuristic")
-
-    return vc_to_source, ms_to_media, vc_to_speed
+    return {}, {}, {}
 
 
 # ---------------------------------------------------------------------------
@@ -356,13 +272,20 @@ class Resolver:
     def _chain_maps(
         self,
     ) -> Tuple[Dict[int, int], Dict[int, str], Dict[int, float]]:
-        """Lazily build and cache the deterministic chain maps.
+        """Chain maps for deterministic MasterClip→Media + speed resolution.
 
-        Both ``_media_map`` and clip-speed resolution derive from the same
-        second iterparse pass, so it only runs once per Resolver instance.
+        Preferred source: the maps the index already extracted during its
+        own parse pass (no extra I/O, no second pass). Legacy fallbacks
+        (a second iterparse over ``file_path`` / ``xml_bytes``) apply only
+        when the index predates single-pass chain extraction — e.g. an
+        index constructed directly rather than via ``from_*`` builders, or
+        built by an older version.
         """
         if self._chain_maps_cache is None:
-            if self._file_path:
+            index_maps = self._index.chain_maps()
+            if any(index_maps):
+                self._chain_maps_cache = index_maps
+            elif self._file_path:
                 self._chain_maps_cache = _build_chain_maps(self._file_path)
             elif self._xml_bytes:
                 self._chain_maps_cache = _build_chain_maps_from_bytes(self._xml_bytes)
