@@ -6,6 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "prproj-parser"
 dynamic = ["version"]
 description = "Efficient parser for Adobe Premiere Pro .prproj project files"
+authors = [{ name = "catastrofia" }]
+keywords = ["premiere", "premiere-pro", "prproj", "adobe", "video-editing", "parser", "xml"]
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
