@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-13
 
 Initial public release.
 
@@ -40,7 +40,9 @@ Initial public release.
   extracted during the index `iterparse` pass itself instead of a second
   full parse of the file, and the post-parse root cleanup is O(n) instead
   of O(n²) (per-child `remove()` calls rescanned the child list). On an
-  8,000-clip synthetic project: ~2.26 s → ~0.23 s. `list_sequences()`
+  8,000-clip synthetic project: ~2.26 s → ~0.23 s on the stdlib and
+  defusedxml backends (lxml's C-level element removal already reduces the
+  old cleanup cost, so gains there are smaller, ~1.5×). `list_sequences()`
   unchanged.
 - `_build_chain_maps()` / `_build_chain_maps_from_bytes()` are now thin
   wrappers over the index's chain maps and are deprecated for hot-path
