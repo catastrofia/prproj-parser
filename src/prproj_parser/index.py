@@ -65,8 +65,8 @@ def _open_prproj_stream(file_path: str) -> Iterator[BinaryIO]:
             yield f
         finally:
             f.close()
-    except gzip.BadGzipFile:
-        raise PrprojParseError(f"Not a valid gzip file: {file_path}")
+    except gzip.BadGzipFile as e:
+        raise PrprojParseError(f"Not a valid gzip file: {file_path}") from e
     except PrprojParseError:
         raise
     except Exception as e:
@@ -91,6 +91,10 @@ class ProjectIndex:
     by_uid: Dict[str, Element] = field(default_factory=dict, repr=False)
     sequences: Dict[str, Element] = field(default_factory=dict, repr=False)
     version: Optional[str] = None
+    #: True when this index was built by a single-pass builder that already
+    #: extracted the chain maps (from_file/from_xml_string/from_xml_bytes).
+    #: Legacy fallbacks in Resolver only apply to indexes built directly.
+    chain_extracted: bool = False
     #: VideoClip/AudioClip ObjectID -> Source (VMS/AMS) ObjectRef.
     #: Extracted during the same iterparse pass as the index (no second pass).
     vc_to_source: Dict[int, int] = field(default_factory=dict, repr=False)
@@ -161,6 +165,7 @@ class ProjectIndex:
           the O(n²) per-child remove() pattern).
         """
         index = cls()
+        index.chain_extracted = True
 
         try:
             context = iterparse(stream, events=("start", "end"))
@@ -270,6 +275,11 @@ class ProjectIndex:
             - ``ms_to_media``: VMS/AMS ObjectID -> Media ObjectUID
             - ``vc_to_speed``: VideoClip/AudioClip ObjectID ->
               PlaybackSpeed multiplier (absent = normal speed)
+
+        Note:
+            The returned mappings are views of the index's own internal
+            state (empty dicts when the file has no chain elements).
+            Callers must not mutate them; mutate copies if needed.
         """
         return self.vc_to_source, self.ms_to_media, self.vc_to_speed
 

@@ -56,7 +56,8 @@ from .timecode import detect_fps, seconds_to_timecode, ticks_to_seconds
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Deterministic chain maps (C1 fix — second iterparse pass)
+# Deterministic chain maps (extracted in the index's single iterparse pass;
+# see ProjectIndex.chain_maps)
 # ---------------------------------------------------------------------------
 
 
@@ -246,10 +247,13 @@ class Resolver:
         resolver = Resolver(index)
         project = resolver.resolve_project("my_project.prproj")
 
-    For deterministic MasterClip -> Media resolution, pass the file path
-    so the resolver can perform a second iterparse pass::
+    Chain maps are normally already present on the index (extracted during
+    its single iterparse pass). The ``file_path`` / ``xml_bytes`` arguments
+    only matter for indexes built directly, which pre-date single-pass
+    extraction::
 
-        resolver = Resolver(index, file_path="my_project.prproj")
+        resolver = Resolver(index)
+        project = resolver.resolve_project("my_project.prproj")
     """
 
     def __init__(
@@ -282,10 +286,15 @@ class Resolver:
         built by an older version.
         """
         if self._chain_maps_cache is None:
-            index_maps = self._index.chain_maps()
-            if any(index_maps):
-                self._chain_maps_cache = index_maps
+            if self._index.chain_extracted:
+                # Index was built by a single-pass builder: the chain maps are
+                # already extracted (possibly empty for chain-free projects).
+                # Re-parsing the file cannot produce different maps, so the
+                # legacy second pass is never needed here.
+                self._chain_maps_cache = self._index.chain_maps()
             elif self._file_path:
+                # Index built directly (pre-dates single-pass extraction):
+                # run the legacy builders to populate the maps.
                 self._chain_maps_cache = _build_chain_maps(self._file_path)
             elif self._xml_bytes:
                 self._chain_maps_cache = _build_chain_maps_from_bytes(self._xml_bytes)
@@ -297,9 +306,9 @@ class Resolver:
     def _media_map(self) -> Dict[str, MediaInfo]:
         """Lazily build the MasterClip -> Media map.
 
-        Uses deterministic chain maps from a second iterparse pass when
-        a file path or XML bytes are available; falls back to pure
-        heuristic matching otherwise.
+        Uses the deterministic chain maps extracted during the index's
+        single iterparse pass; falls back to pure heuristic matching when
+        no chain data is available.
         """
         if self._mc_media_map is None:
             vc_to_source, ms_to_media, _vc_to_speed = self._chain_maps
@@ -733,14 +742,15 @@ def resolve(
     This is the main entry point for turning raw indexed XML elements into
     the high-level data model.
 
-    When ``file_path`` is provided, a second lightweight iterparse pass
-    extracts deterministic MasterClip -> Media chain maps for more accurate
-    media resolution.
+    Deterministic MasterClip -> Media chain maps come from the index itself
+    (extracted during its single iterparse pass). The ``file_path`` /
+    ``xml_bytes`` arguments are only used to run legacy chain-map builders
+    when the index was constructed directly and has no chain data.
 
     Args:
         index: A :class:`ProjectIndex` built from a ``.prproj`` file.
-        file_path: Path to the original file (stored on the Project and
-            used for the deterministic chain pass).
+        file_path: Path to the original file (stored on the Project; used
+            for legacy chain-map extraction on directly-built indexes).
         xml_bytes: Raw XML bytes (alternative to file_path for in-memory use).
 
     Returns:
