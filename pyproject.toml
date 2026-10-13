@@ -29,7 +29,7 @@ secure = ["defusedxml>=0.7"]
 all = ["lxml>=4.9", "defusedxml>=0.7"]
 dev = [
     "build>=1.0",
-    "mypy>=1.8,<1.18",
+    "mypy>=1.8,<2.5",
     "pre-commit>=3.5",
     "pytest>=7.4",
     "ruff==0.6.9",
