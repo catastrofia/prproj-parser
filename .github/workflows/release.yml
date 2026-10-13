@@ -35,3 +35,20 @@ jobs:
   test:
     needs: build
     uses: ./.github/workflows/test.yml
+
+  publish:
+    needs: [build, test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # PyPI Trusted Publishing (OIDC)
+
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
