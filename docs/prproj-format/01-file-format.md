@@ -25,6 +25,7 @@ with open(path, "rb") as f:
 
 if data[:2] == b"\x1f\x8b":
     import gzip
+
     xml_bytes = gzip.decompress(data)
 else:
     xml_bytes = data
