@@ -32,6 +32,29 @@ Initial public release.
   generators (which have no real underlying media file) were classified as
   `Unknown` instead of the new `Premiere element` type.
 
+### Changed
+
+- **~9× faster `load()` on large projects.** Indexing is now strictly
+  single-pass: the deterministic MasterClip → Media chain maps
+  (`VideoClip`/`AudioClip` → Source → Media, plus `PlaybackSpeed`) are
+  extracted during the index `iterparse` pass itself instead of a second
+  full parse of the file, and the post-parse root cleanup is O(n) instead
+  of O(n²) (per-child `remove()` calls rescanned the child list). On an
+  8,000-clip synthetic project: ~2.26 s → ~0.23 s. `list_sequences()`
+  unchanged.
+- `_build_chain_maps()` / `_build_chain_maps_from_bytes()` are now thin
+  wrappers over the index's chain maps and are deprecated for hot-path
+  use; prefer `ProjectIndex.chain_maps()` (see the new
+  `tests/test_performance.py` architecture tests).
+- Namespace stripping in `local_name()` is memoized (element tags are
+  highly repetitive across large project files).
+
+### Added
+
+- `benchmarks/` — synthetic fixture generator (`gen_fixture.py`) and
+  benchmark harness (`bench.py`) for measuring parse performance without
+  committing private project files.
+
 ### Known limitations
 
 - Nested/multicam sequences are detected but not recursively flattened
