@@ -40,7 +40,7 @@ Add a `CHANGELOG.md` entry only for notable user-facing, API, compatibility, or 
 
 ## Release process
 
-Maintainers cut releases on demand when useful user-facing changes accumulate. A release PR updates `CHANGELOG.md`, version metadata if needed, and the release date. Release notes come from the dated `CHANGELOG.md` section. For now, tags build and test release artifacts for a GitHub Release; PyPI publishing is manual/later and tags do not publish to PyPI.
+Maintainers cut releases on demand when useful user-facing changes accumulate. A release PR updates `CHANGELOG.md`, version metadata if needed, and the release date. Release notes come from the dated `CHANGELOG.md` section. Tags trigger the release workflow: artifacts are built, tested across all supported Pythons, and published to PyPI via Trusted Publishing when the tag starts with `v` (see `.github/workflows/release.yml`). GitHub Releases are cut from the dated `CHANGELOG.md` section.
 
 ## Labels
 
